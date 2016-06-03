@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template
 import tweepy
-import datetime
-import time
+
 import json
 
 app = Flask(__name__)
@@ -12,6 +11,7 @@ CONSUMER_SECRET = 'SXtnxlNA0GAHDaLRfvEGHOXbpUxTD6i0sYFTTa972glBBmEOQF'
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(auth)
+FOLLOWED = []
 
 
 class StdOutListener(tweepy.StreamListener):
@@ -21,8 +21,12 @@ class StdOutListener(tweepy.StreamListener):
 
     def on_data(self, status):
         self.number_of_tweets += 1
-        print  json.loads(status)['created_at'].split(" ")[3]
-        print json.loads(status)['text']
+
+        user_id = json.loads(status)['user']['id']
+        tweet_id = json.loads(status)['id_str']
+        FOLLOWED.append(json.loads(status)['user']['screen_name'])
+        api.create_friendship(user_id)
+        api.create_favorite(tweet_id)
         if not (self.number_of_tweets < self.limit):
             print "LIMIT REACHED"
             return False
