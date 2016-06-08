@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, url_for, render_template
 import tweepy
 
+
 import json
 
 app = Flask(__name__)
@@ -30,8 +31,7 @@ class StdOutListener(tweepy.StreamListener):
         if not (self.number_of_tweets < self.limit):
             print "LIMIT REACHED"
             return False
-        else:
-            return True
+
 
     def on_error(self, status):
         print status
@@ -60,9 +60,10 @@ def follow_like(key):
 
 def UnFollow():
     for user in tweepy.Cursor(api.friends, screen_name='kaustuv deolal').items():
-        print user.screen_name
-        print user.created_at
-        print "\n"
+        if user.screen_name in FOLLOWED:
+            api.destroy_friendship(user.screen_name)
+
+    del FOLLOWED[:]
 
 
 if __name__ == "__main__":
