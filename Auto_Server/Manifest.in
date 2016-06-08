@@ -1,2 +1,0 @@
-recursive-include Auto_Server/Templates/*
-recursive-include Auto_Server/static/*
